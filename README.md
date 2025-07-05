@@ -1,4 +1,4 @@
-# Simple-Application-Based-on-OpenGL、
+# Simple-Application-Based-on-OpenGL
 
 # 1.
 In the branch "Simple Moving Pentagon," a texture and color blending assignment for a pentagon has been implemented, and translation, rotation, and scaling have been achieved in a 2D plane.
@@ -209,8 +209,8 @@ Initially, we planned to use existing textures, but we discovered that these tex
     glBindVertexArray(0);
 
 # Vehicle Control Based on Mouse and Keyboard
-To achieve good encapsulation and avoid overly complex original code, we created a car.h file specifically for writing vehicle control code. Here is the relevant code in car.h (omitting the precompiled code and only showing the parts that actually take effect):
 # 基于鼠标和键盘的车辆控制
+To achieve good encapsulation and avoid overly complex original code, we created a car.h file specifically for writing vehicle control code. Here is the relevant code in car.h (omitting the precompiled code and only showing the parts that actually take effect):
 为了实现好封装独立性，避免原有代码过于冗杂，我们创建了一个car.h专门进行车辆控制代码的编写，以下是car.h中的代码：（这里省去了预编译的代码，只写其中发挥实际作用的部分）
 
 const float OBJSPEED = 8.0f;
@@ -420,9 +420,9 @@ In handling the first mouse input, within the mouse_callback function, if it is 
 在鼠标首次输入处理中，在mouse_callback函数中，如果检测到是第一次鼠标输入，则记录当前鼠标位置，并设置firstMouse标志为false，以便于后续处理鼠标移动。
 
 # Vehicle Obstacle Detection, Vehicle Shattering Effect Display, and Car Automatic Looping Movement
+# 车辆障碍物检测、车辆碎裂效果显示和小车自动循环运动
 Subsequently, we introduced vehicle obstacle detection. Initially, we planned to employ the bounding box method to handle this task. However, we later realized that this approach was unnecessary. Since the vehicles move in a planar manner within the urban model, it is sufficient to perform boundary detection within the plane to easily achieve vehicle obstacle detection. Nevertheless, due to the complex changes that had already occurred in the coordinate system, it was difficult to calculate the boundaries at various locations within the urban model using coordinate transformation. Therefore, we directly incorporated a return value into the movement process of the bus, allowing it to travel along the boundary line and record the corresponding coordinate values at key nodes. Finally, we set boundary constraints based on these coordinate values. Figure 13 is a schematic diagram of planar obstacles within the urban model, illustrating the structure of the entire urban model. Based on this, we designed a boundary diagram, defining boundary constraints through vertical and horizontal constraints. We prioritized the use of a smaller number of horizontal constraints to divide the entire diagram into five regions, and then used vertical constraints within each region to determine whether there was a collision with obstacles.
 Based on the results, we wrote a function to determine whether the bus had crossed the obstacle:
-# 车辆障碍物检测、车辆碎裂效果显示和小车自动循环运动
 随后，我们加入车辆障碍物检测。刚开始我们准备引入障碍物外框法进行处理，但是后来我们发现没有必要使用这种方法，因为车辆本身是在城市模型中进行平面移动的，所以说只需要在平面中做边界检测就可以轻松实现车辆的障碍物检测。但是由于之前坐标系已经发生了比较复杂的变化，难以使用坐标变换的方式计算出城市模型中各个地方的边界。因此，我们直接在大巴运动的过程中加入返回值，让大巴沿着边界线跑一圈，然后在关键节点处记录相应坐标值，最后根据坐标值设定边界约束就可以了。如图13是在城市模型中的平面障碍物示意图，显示了整个城市模型的结构，依据此我们设计了边界示意图，通过竖向和横向的约束规定边界约束。我们优先使用数量较少的横向约束将整张图分为五个区域，然后在每个区域依次使用竖向约束分类讨论决定是否碰撞到障碍物。
 根据结果，我们写出了判定大巴是否越过障碍物的相关函数：
 
@@ -635,9 +635,9 @@ car.Draw(ourShader);
 car.Draw(simpleDepthShader);
 
 # Lighting, Shadow Rendering, and Others
+# 光照、阴影渲染和其他
 The methods for lighting and shadow rendering mainly refer to those in LearnOpenGL. Since the objects being rendered in the entire scene are not ordinary cubes but various .obj models, the shader rendering should be targeted at all the meshes of the .obj models. We first set the position of the light source and used the depth testing method to determine the occlusion and occluded relationships of the models, thereby further identifying the shadow areas. We primarily used the following shaders for this operation: shadow_mapping_depth.vs, shadow_mapping_depth.fs, shader.vs, and shader.fs.
 In the main program, we used the following code for lighting and shadow rendering:
-# 光照、阴影渲染和其他
 光照和阴影渲染主要参考了learnopengl中的方法，由于在整个场景中，渲染的对象不是普通的立方体，而是各种.obj的模型，因此着色器的渲染应当是针对于.obj的所有网格而言的。我们首先设置了光源的位置，并且使用了深度测试的方法，对于模型求解出遮挡与被遮挡的关系，从而进一步确定阴影的区域。我们主要是使用了shadow_mapping_depth.vs、shadow_mapping_depth.fs、shader.vs、shader.fs进行这一操作的。在主程序中，我们使用了下列的代码进行光照和阴影渲染：
 
 glm::vec3 lightPos(25.0f, 50.0f, 25.0f);
