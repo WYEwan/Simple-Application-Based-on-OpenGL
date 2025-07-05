@@ -17,8 +17,12 @@ In the branch "Swinging Robot," a texture assignment for a robot has been implem
   总体上看，本设计结合大部分我们所学过的技术，包括外界模型的导入和解析着色、基于变换的地物摆放和场景构建、光源设计和光照渲染、阴影渲染、基于边界检测的障碍物识别、基于法向量的模型网格平移和变换、基于时间计算的地物循环移动、天空盒设置等等。
 
 2.配置方法
-下载文件后，创建一个名为“workfinal2_”的文件夹用以存储文件
-在该文件夹中继续加入两个文件夹，分别名为txx和vis2022work
-txx文件夹中放入我在main中标注的几个.h文件即可
+（1）下载文件后，创建一个名为“workfinal2_”的文件夹用以存储文件
+（2）在该文件夹中继续加入两个文件夹，分别名为txx和vis2022work
+（3）txx文件夹中放入我在main中标注的几个Head File文件即可
+（4）vis2022work文件夹中再创建一个同名的vis2022work文件夹
+（5）在vis2022work文件夹中分别配置assimp-5.4.1、glfw-3.4、glm-master几个外界库文件夹，这几个文件夹自行到对应的外界库下载即可，是常用的C++外界库
+（6）在vis2022work文件夹中创建名为objects文件夹，将
+
 
 
