@@ -79,27 +79,18 @@ Model sea(FileSystem::getPath("objects/sea/sea.obj"));
 Model wheel(FileSystem::getPath("objects/wheel/wheel.obj")); 
 </pre>
 
-We referenced and adapted some content from the model loading section of LearnOpenGL, and made modifications according to our specific needs. The details of loading models are all in the `model.h` and `mesh.h` files.
-
-In the `mesh.h` header file:
-- The `Vertex` structure defines the data that makes up the vertices of a mesh, including position, normal, texture coordinates, tangent, bitangent, as well as ID and weights.
-- The `Texture` structure stores the ID, type, and path information of a texture.
-- The `Mesh` class constructor takes vectors of vertices, indices, and textures as parameters, copies this data to class members, and calls the `setupMesh` method to initialize the mesh.
-- The `Draw` function uses the passed-in `Shader` object to render the mesh. It sets up texture units, binds textures, sets uniform variables in the shader, and uses `glDrawElements` to draw the mesh.
-- The `setupMesh` method is used to set up the OpenGL buffers for the mesh, including generating VAO, VBO, and EBO, binding buffers, and uploading vertex and index data to the GPU. It also sets up the vertex attribute pointers for configuring vertex attributes.
-
-In the `model.h` header file:
-- The `Model` class encapsulates the process of loading data from model files, processing the scene graph, creating meshes and textures, and ultimately rendering the model.
-- The Assimp library is used to handle different 3D model formats, enabling the loading of complex 3D scenes for rendering in OpenGL.
-
-Overall, the principle of the model import part is mainly to traverse and shade the meshes of the .obj file and output them all, making them into models that can be presented and modified.
-
-Finally, we conducted the design of object coordinates. We first set the initial coordinates of different objects, gathered them together, and further judged their orientation and size relationships. The `carrealposition` and `busrealposition` can be temporarily ignored here, as they are not related to object placement but are mainly used to mark the subsequent vehicle positions.
+We referenced and ported parts of the model-loading chapter from learnopengl, making changes according to our actual situation; the specifics of model loading are all inside model.h and mesh.h.
 我们参考并移植了learnopengl中模型加载章节的部分内容，并根据我们的实际情况进行了更改，加载模型的具体细节都在model.h和mesh.h之中。
+
+In the mesh.h header, the Vertex struct defines the data constituting a mesh vertex, including position, normal, texture coordinates, tangent, bitangent, and IDs and weights. The Texture struct stores a texture’s ID, type, and path info. The Mesh class constructor takes vectors of vertices, indices, and textures as parameters, copies these data into class members, and calls setupMesh to initialize the mesh. The Draw function uses the passed-in Shader object to render the mesh: it sets texture units, binds textures, sets shader uniform variables, and draws the mesh with glDrawElements. setupMesh is used to set up the mesh’s OpenGL buffers, including generating VAO, VBO, and EBO, binding the buffers, and uploading vertex and index data to the GPU. It also sets vertex-attribute pointers for vertex-attribute configuration.
 在mesh.h头文件中，Vertex结构体定义了构成网格顶点的数据，包括位置、法线、纹理坐标、切线、副法线以及ID和权重。Texture结构体存储了纹理的ID、类型和路径信息。Mesh类构造函数接受顶点、索引和纹理的向量作为参数，复制这些数据到类成员，并调用setupMesh方法来初始化网格。Draw函数使用传入的Shader对象来渲染网格。它设置纹理单元、绑定纹理、设置着色器的uniform变量，并使用glDrawElements来绘制网格。setupMesh用于设置网格的OpenGL缓冲区，包括生成VAO、VBO和EBO，绑定缓冲区，并将顶点和索引数据上传到GPU。同时，它还设置了顶点属性指针，用于顶点属性的配置。
+
+In the Model.h header, the Model class encapsulates the process of loading data from a model file, processing the scene graph, creating meshes and textures, and finally rendering the model. It uses the Assimp library to handle different 3D model formats, allowing complex 3D scenes to be loaded and rendered in OpenGL.
 在Model.h头文件中，Model类封装了从模型文件加载数据、处理场景图、创建网格和纹理，并最终渲染模型的过程。使用Assimp库来处理不同的3D模型格式，使其可以加载复杂的3D场景，并在OpenGL中进行渲染。
-总的来说，模型引入部分的原理主要就是将.obj的网格进行了遍历着色并全部输出，使其成为一个可以被呈现和改造的模型。
-最后我们进行了地物坐标设计，我们首先设定了不同地物的初始坐标，将不同地物聚拢在一起，进一步判断其朝向和大小关系，这里可以暂时忽略carrealposition和busrealposition，因为这里和地物摆放无关，主要是用来标记后续的车辆位置的。
+
+In summary, the principle of the model-import part is mainly to traverse, shade, and fully output the meshes from .obj so that they become a presentable and modifiable model.总的来说，模型引入部分的原理主要就是将.obj的网格进行了遍历着色并全部输出，使其成为一个可以被呈现和改造的模型。
+
+Finally, we carried out feature-coordinate design: we first set the initial coordinates for different features, clustered the different features together, and further judged their orientation and size relations. Here carrealposition and busrealposition can be temporarily ignored, since they are unrelated to feature placement and are mainly used to mark subsequent vehicle positions.最后我们进行了地物坐标设计，我们首先设定了不同地物的初始坐标，将不同地物聚拢在一起，进一步判断其朝向和大小关系，这里可以暂时忽略carrealposition和busrealposition，因为这里和地物摆放无关，主要是用来标记后续的车辆位置的。
 
 <pre lang="markdown"> 
 glm::vec3 cityposition(35.0f, -6.05f, 0.0f);
