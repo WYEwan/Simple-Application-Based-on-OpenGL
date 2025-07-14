@@ -114,6 +114,7 @@ glm::vec3 seaPosition(2.0f, -50.05f, 4.0f);
 Subsequently, based on the initial positions and states of the objects, we applied scaling, translation, and rotation transformations to place them in appropriate positions. We positioned the clouds at a considerable vertical distance above the ground, placed the sea surface below the city ground, and positioned the bus at the center of the city as its initial location (it is not allowed for the bus to start outside the road, as this would immediately trigger the obstacle collision mechanism, causing the bus to explode). These transformations were achieved using transformation matrices. Here is the relevant code (only the code related to the sea, clouds, and city is shown here, as the bus and car involve more complex code related to subsequent control and movement, which will be discussed later):
 随后，我们通过初始位置地物的状态，对地物进行缩放、平移和旋转，将地物放到合适的位置，我们将云朵摆放到距离地面相当远的垂直位置，将海面摆放到城市地面以下，并将大巴放置到城市中央的初始位置（不能允许大巴刚开始就出现在道路之外，这样一开始就会触发障碍物碰撞机制导致大巴爆炸），这里综合利用了变换矩阵，参见以下的代码：（这里只展示海面、云朵和城市相关的代码，因为大巴和小车本身还和后续的控制、运动有关，会有更复杂的代码，在后续会讲到）：
 
+<pre lang="markdown"> 
 model = glm::mat4(1.0f);
 model = glm::translate(model, seaPosition); 
 model = glm::scale(model, seaScaleVector);   
@@ -130,11 +131,13 @@ model = glm::mat4(1.0f);
 model = glm::translate(model, cityposition);
 ourShader.setMat4("model", model);
 city.Draw(ourShader);
+</pre>
 
 Next, we set up the skybox, which essentially surrounds the city with a large cube. We defined the specific coordinates for the skybox and applied internal texturing to it. The texturing method we used was not a conventional one but rather a cubemap approach, which we referenced from LearnOpenGL. Subsequently, we scaled the skybox to a sufficiently large size to ensure that the entire city model was enclosed within it.
 Initially, we planned to use existing textures, but we discovered that these textures included a sea surface. When placed in the scene, this would create an uncomfortable visual clash with our actual sea model. Therefore, we decided to use only the sky portion of the texture and applied the same image to all six faces of the skybox. This eliminated the issue of the textured sea conflicting with the actual sea surface in the scene.
 接下来，我们设置天空盒，即在城市的外围使用一个巨大的天空盒包围起来，我们定义天空盒的具体坐标，对天空盒进行内部贴图，这里使用的贴图不是普通的贴图，而是参考了learnopengl中的立方体贴图方法，随后将天空盒放大到足够大的状态，使得整个城市模型都被包裹其中。我们刚开始准备使用旧有的贴图，但是我们发现原有贴图中包含了海面，当放在场景中时，会与我们的海面模型产生视觉的不适感，所以我们只使用了贴图中天空的部分，并且在六个面上都贴了相同的图片，这样就没有贴图中的海面和实际的海面相冲突的问题了。
 
+<pre lang="markdown"> 
     float scale = 90000.0f;
     float skyboxVertices[] = {
      -1.0f * scale,  1.0f * scale, -1.0f * scale,
@@ -211,12 +214,14 @@ Initially, we planned to use existing textures, but we discovered that these tex
       glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
       glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
-
+</pre>
+       
 # Vehicle Control Based on Mouse and Keyboard
 # 基于鼠标和键盘的车辆控制
 To achieve good encapsulation and avoid overly complex original code, we created a car.h file specifically for writing vehicle control code. Here is the relevant code in car.h (omitting the precompiled code and only showing the parts that actually take effect):
 为了实现好封装独立性，避免原有代码过于冗杂，我们创建了一个car.h专门进行车辆控制代码的编写，以下是car.h中的代码：（这里省去了预编译的代码，只写其中发挥实际作用的部分）
 
+<pre lang="markdown"> 
 const float OBJSPEED = 8.0f;
 class GameObject {
 public:
@@ -280,6 +285,7 @@ public:
           updateVectors(); 
       }
 };
+</pre>
 
 This class simulates the basic behavior and attributes of a bus, making it convenient to create game objects with position, orientation, and rotation attributes in the main program. Each object has a position vector representing its coordinates in world space; a forward vector indicating the direction the object is facing; an up vector, typically used to determine the object's vertical direction; and a right vector, perpendicular to the forward and up vectors, used to determine the object's horizontal direction.
 The constructor in the class initializes these basic vectors and calculates the initial right vector. The processInput method allows the object to move in space based on user input (such as keyboard or controller operations). By changing the object's position, forward or backward movement can be simulated. The processTurn method allows the object to rotate around the vertical axis, i.e., increasing or decreasing the yaw, thereby changing its forward direction.
@@ -290,6 +296,7 @@ In the main program, we also wrote relevant code for overall invocation operatio
 updateVectors 方法用于根据当前的偏航角重新计算前方向量和右侧向量，确保它们始终垂直于上方向量，这对于保持对象在空间中的正确方向至关重要。rotate 方法提供了更高级的旋转功能，允许对象绕任意轴旋转，这在需要更复杂旋转操作时非常有用。此外，类还提供了几个获取器（getter）方法，允许外部代码查询对象的位置、偏航角和前方向量，这在渲染、碰撞检测或其他游戏逻辑中需要使用。
 在主程序中，我们也写了相关代码进行总体的调用操作：
 
+<pre lang="markdown"> 
 Camera camera(glm::vec3(0.0f, 8.0f, 0.0f));
 GameObject buspos(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -404,7 +411,8 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
       camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
-
+</pre>
+        
 In the main program, we performed operations such as game loop control, user input processing, window and input callbacks, camera and object control, stopping the game logic, handling the first mouse input, initialization, and frame time calculation, among others.
 During initialization and frame time calculation, a Camera object and a GameObject object were created. The Camera object is used to control the camera's perspective, while the GameObject object is used to control the position and rotation of the bus. Additionally, some variables were initialized.
 In game loop control, the program first checks whether the game should be stopped (for example, through a key press). If not, it updates the position and model transformation of the bus, including translation and scaling.
@@ -430,6 +438,7 @@ Based on the results, we wrote a function to determine whether the bus had cross
 随后，我们加入车辆障碍物检测。刚开始我们准备引入障碍物外框法进行处理，但是后来我们发现没有必要使用这种方法，因为车辆本身是在城市模型中进行平面移动的，所以说只需要在平面中做边界检测就可以轻松实现车辆的障碍物检测。但是由于之前坐标系已经发生了比较复杂的变化，难以使用坐标变换的方式计算出城市模型中各个地方的边界。因此，我们直接在大巴运动的过程中加入返回值，让大巴沿着边界线跑一圈，然后在关键节点处记录相应坐标值，最后根据坐标值设定边界约束就可以了。如图13是在城市模型中的平面障碍物示意图，显示了整个城市模型的结构，依据此我们设计了边界示意图，通过竖向和横向的约束规定边界约束。我们优先使用数量较少的横向约束将整张图分为五个区域，然后在每个区域依次使用竖向约束分类讨论决定是否碰撞到障碍物。
 根据结果，我们写出了判定大巴是否越过障碍物的相关函数：
 
+<pre lang="markdown"> 
 bool test_obstacle(GameObject k) {
       float carx = k.position.x;
       float carz = k.position.z;
@@ -486,12 +495,14 @@ bool test_obstacle(GameObject k) {
           return FALSE;
       }
 }
+</pre>
 
 After actual debugging and verification, it has been proven that this obstacle detection method, although somewhat cumbersome, is very effective. The bus can effectively perform automatic obstacle detection throughout the entire city model.
 Subsequently, we need to create a shattering effect when the bus detects that it has collided with an obstacle. Here, we referred to the geometry shader method from learnopengl to achieve such an effect. We move along the direction of the normal vector on each mesh, making the overall effect look as if the object is exploding. In the files geometry_shader.fs, geometry_shader.gs, and geometry_shader.vs, there are different shader programs that generate the explosion effect, which are listed below:
 经过实际调试和验证，证明这项障碍物检测方法虽然比较笨拙，但是非常有效，大巴能够有效地在整个城市模型中进行自动障碍物检测。
 随后，我们需要在大巴检测到自身碰到障碍物时产生碎裂效果，这里我们参考了learnopengl中的几何着色器方法产生这样的效果。在每个网格上沿着法向量的方向进行移动，使得总的效果就像是物体在爆炸一样，在geometry_shader.fs、geometry_shader.gs和geometry_shader.vs中，分别有着产生爆炸效果的不同着色器程序，分别列在下面：
 
+<pre lang="markdown"> 
 #version 330 core
 out vec4 FragColor;
 
@@ -569,6 +580,7 @@ void main()
       vs_out.texCoords = aTexCoords;
       gl_Position = projection * view * model * vec4(aPos, 1.0); 
 }
+</pre>
 
 Since our explosion effect requires the bus fragments to reach a certain distance instantaneously and then begin to move outward slowly, we introduced the variable \( t \) in the second shader code segment and modified the magnitude of the movement speed. This allows \( t \) to reach a large value instantly and then increase slowly.
 To coordinate with the shader program mentioned above, we also designed the main program. We added some conditional logic to make the bus stop all actions and automatically exit the program a few seconds after the explosion, indicating the end of the game. To make the explosion smoother, we further investigated the rendering loop and adopted the time variable from GLFW for cumulative rendering.
@@ -579,6 +591,7 @@ Below is the main code in the primary program that plays a significant role. It 
 另外，我们同样使用了glfw的时间变量来实现小车的自动移动，我们让小车从街道的一端出发，然后以合适的速度移动，到达街道的另外一端后小车又会重新回到起点，并且重新出发。
 以下是主程序中主要起作用的代码，需要指出的是，其中的w0、tem等变量主要是用于标记用，有的是用来记录碰到障碍物的瞬时时间，有的是用来记录小车的运行距离，这些变量能够有效帮助到后面爆炸循环和小车运动循环的逻辑：
 
+<pre lang="markdown"> 
 float w0 = static_cast<float>(glfwGetTime());
 float w1 = -2000;
 float w2 = 0;
@@ -637,41 +650,44 @@ carrealposition = model * carrealposition;
 ourShader.setMat4("model", model);
 car.Draw(ourShader);
 car.Draw(simpleDepthShader);
-
+</pre>
+      
 # Lighting, Shadow Rendering, and Others
 # 光照、阴影渲染和其他
 The methods for lighting and shadow rendering mainly refer to those in LearnOpenGL. Since the objects being rendered in the entire scene are not ordinary cubes but various .obj models, the shader rendering should be targeted at all the meshes of the .obj models. We first set the position of the light source and used the depth testing method to determine the occlusion and occluded relationships of the models, thereby further identifying the shadow areas. We primarily used the following shaders for this operation: shadow_mapping_depth.vs, shadow_mapping_depth.fs, shader.vs, and shader.fs.
 In the main program, we used the following code for lighting and shadow rendering:
 光照和阴影渲染主要参考了learnopengl中的方法，由于在整个场景中，渲染的对象不是普通的立方体，而是各种.obj的模型，因此着色器的渲染应当是针对于.obj的所有网格而言的。我们首先设置了光源的位置，并且使用了深度测试的方法，对于模型求解出遮挡与被遮挡的关系，从而进一步确定阴影的区域。我们主要是使用了shadow_mapping_depth.vs、shadow_mapping_depth.fs、shader.vs、shader.fs进行这一操作的。在主程序中，我们使用了下列的代码进行光照和阴影渲染：
 
+<pre lang="markdown"> 
 glm::vec3 lightPos(25.0f, 50.0f, 25.0f);
 Shader ourShader("shader.vs", "shader.fs");
 Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 
-    unsigned int depthMapFBO;
-    glGenFramebuffers(1, &depthMapFBO);
-    unsigned int depthMap;
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
+unsigned int depthMapFBO;
+glGenFramebuffers(1, &depthMapFBO);
+unsigned int depthMap;
+glGenTextures(1, &depthMap);
+glBindTexture(GL_TEXTURE_2D, depthMap);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
+GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+glDrawBuffer(GL_NONE);
+glReadBuffer(GL_NONE);
 glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 ourShader.use();
 ourShader.setVec3("lightColor", 0.8f, 0.8f, 0.8f);
 ourShader.setVec3("lightPos", lightPos);
 ourShader.setVec3("viewPos", 0.0f, 0.0f, 8.0f);
+</pre>
 
 Below is the code for shader.fs. This fragment shader performs lighting calculations. It first defines the output color FragColor and the input variables, including the vertex position, normal, texture coordinates, and the vertex position in light space, which are passed from the vertex shader. The code uses uniform variables to store information about light color, position, observer position, and texture.
 The core functionalities include the calculation of ambient, diffuse, and specular lighting, as well as the implementation of shadow effects. Ambient light provides the base brightness of the scene. Diffuse lighting calculates the effect of direct light hitting the surface of the object, while specular lighting simulates the reflection of light on the object's surface. Shadow calculation is achieved by sampling the shadow map in light space, which helps to reduce the jagged edges of shadows.
@@ -680,6 +696,7 @@ Finally, these lighting effects are combined with the texture color to generate 
 核心功能包括环境光、漫反射和镜面反射的计算，以及阴影效果的实现。环境光提供了场景的基础亮度，漫反射计算了光直接照射到物体表面的效果，而镜面反射则模拟了光在物体表面的反射。阴影计算通过在光照空间中采样阴影映射来实现，减少阴影的锯齿效果。
 最终，这些光照效果与纹理颜色结合，生成了最终的像素颜色，输出到FragColor。这段着色器代码是实现逼真3D渲染的关键部分，通过模拟真实世界的光照和阴影效果，增强了视觉效果。
 
+<pre lang="markdown"> 
 #version 330 core
 out vec4 FragColor;
 
@@ -740,10 +757,12 @@ void main()
       vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular)) * textureColor;
       FragColor = vec4(result, 1.0);
 }
+</pre>
 
 Below is the code for shader.vs, which is used to handle vertex transformations and lighting preparation for 3D graphics. It defines the input vertex position aPos, normal aNormal, and texture coordinates aTexCoords, as well as the variables output to the fragment shader. It is responsible for transforming vertices from model space to clip space and preparing the necessary data for lighting and shadow calculations in the fragment shader.
 以下是shader.vs的代码，用于处理3D图形的顶点变换和光照准备，定义了输入顶点位置aPos、法线aNormal和纹理坐标aTexCoords，以及输出到片段着色器的变量，负责将顶点从模型空间转换到裁剪空间，并准备必要的数据以供片段着色器进行光照和阴影计算。
 
+<pre lang="markdown"> 
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
@@ -767,10 +786,12 @@ void main()
       FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
       gl_Position = projection * view * vec4(FragPos, 1.0);
 }
+</pre>
 
 Here are the codes for `shadow_mapping_depth.fs` and `shadow_mapping_depth.vs`, both of which are relatively short. In the first fragment, no operations are performed. In the second fragment, the vertex positions in shadow mapping are set. It takes a vertex position `aPos` as input and uses the uniform variables `lightSpaceMatrix` and `model` to perform matrix transformations to generate the shadow map. The `lightSpaceMatrix` is typically used to transform vertices from model space to a specific light space, in order to capture the depth information of the scene in the depth map.
 以下是shadow_mapping_depth.fs和shadow_mapping_depth.vs的代码，比较简短，在第一个片段没有进行操作，在第二个片段上设置了在阴影映射中的顶点位置，接收一个顶点位置aPos作为输入，并使用uniform变量lightSpaceMatrix和model来执行矩阵变换，生成阴影映射，其中lightSpaceMatrix通常用于将顶点从模型空间变换到特定的光源空间，以便在深度图中捕捉场景的深度信息。
 
+<pre lang="markdown"> 
 #version 330 core
   
 void main()
@@ -787,7 +808,8 @@ void main()
 {
       gl_Position = lightSpaceMatrix * model * vec4(aPos, 1.0);
 }
-
+</pre>
+  
 That concludes the part on lighting rendering, which enables all models in the scene to undergo lighting and shadow rendering, making the scene more realistic. At present, it has essentially covered all the parts in the program. However, there are still a few pieces of code that have not been mentioned, including the initialization operations for OpenGL, such as window creation and basic variable initialization, etc. Additionally, there are a few operations related to VAOs and VBOs. Since these are relatively simple, they will not be elaborated on here. For detailed information, please refer to the attached complete code later.
 以上就是光照渲染的部分，能够让场景中的所有模型都能进行光照和阴影的渲染，使得场景更加真实。目前来讲已经基本包含了程序中的所有部分，但还有少数代码没有提及，包括其中对于opengl的初始化操作，包括窗口创建、基本量初始化等等，然后还有几个VAO和VBO的操作，由于比较简单，这里也不再赘述，具体的可以参见后面附加的详细代码。
 
