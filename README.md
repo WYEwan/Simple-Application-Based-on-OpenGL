@@ -71,12 +71,12 @@ Initially, we searched for relevant models on SketchUp. At the beginning, we int
 首先，我们在sketchup上寻找相关模型，刚开始，我们是准备使用一些高级的模型，即一些格式较复杂的模型，但是后来在引入模型的过程中遇到了较大的困难，发现其中需要更改比较底层的配置，我们在尝试了一周后放弃了这条路径，后来，我们直接按照.obj去寻找标准模型，在网上找到了某个日本城市相关的模型，包括城市模型、大巴模型、小车模型、云朵模型、大海模型。于是，我们分别导出了其.obj文件作为实际模型并取得了成功。以下是相关代码：
 
 <pre lang="markdown"> 
-  cpp Model car(FileSystem::getPath("objects/car/car.obj")); 
-  Model bus(FileSystem::getPath("objects/bus/bus.obj")); 
-  Model city(FileSystem::getPath("objects/city/city.obj")); 
-  Model cloud(FileSystem::getPath("objects/cloud/cloud.obj")); 
-  Model sea(FileSystem::getPath("objects/sea/sea.obj")); 
-  Model wheel(FileSystem::getPath("objects/wheel/wheel.obj")); 
+cpp Model car(FileSystem::getPath("objects/car/car.obj")); 
+Model bus(FileSystem::getPath("objects/bus/bus.obj")); 
+Model city(FileSystem::getPath("objects/city/city.obj")); 
+Model cloud(FileSystem::getPath("objects/cloud/cloud.obj")); 
+Model sea(FileSystem::getPath("objects/sea/sea.obj")); 
+Model wheel(FileSystem::getPath("objects/wheel/wheel.obj")); 
 </pre>
 
 We referenced and adapted some content from the model loading section of LearnOpenGL, and made modifications according to our specific needs. The details of loading models are all in the `model.h` and `mesh.h` files.
@@ -101,6 +101,7 @@ Finally, we conducted the design of object coordinates. We first set the initial
 总的来说，模型引入部分的原理主要就是将.obj的网格进行了遍历着色并全部输出，使其成为一个可以被呈现和改造的模型。
 最后我们进行了地物坐标设计，我们首先设定了不同地物的初始坐标，将不同地物聚拢在一起，进一步判断其朝向和大小关系，这里可以暂时忽略carrealposition和busrealposition，因为这里和地物摆放无关，主要是用来标记后续的车辆位置的。
 
+<pre lang="markdown"> 
 glm::vec3 cityposition(35.0f, -6.05f, 0.0f);
 glm::vec4 carrealposition(0.0f, -6.05f, 0.0f, 1.0f);
 glm::vec4 busrealposition(0.0f, -6.05f, 0.0f, 1.0f);
@@ -108,6 +109,7 @@ glm::vec3 busposition(0.0f, -6.05f, 0.0f);
 glm::vec3 cloudPosition(0.0f,150.5f, -0.0f);
 glm::vec3 carPosition(0.0f, -6.05f, 0.0f);
 glm::vec3 seaPosition(2.0f, -50.05f, 4.0f);
+</pre>
 
 Subsequently, based on the initial positions and states of the objects, we applied scaling, translation, and rotation transformations to place them in appropriate positions. We positioned the clouds at a considerable vertical distance above the ground, placed the sea surface below the city ground, and positioned the bus at the center of the city as its initial location (it is not allowed for the bus to start outside the road, as this would immediately trigger the obstacle collision mechanism, causing the bus to explode). These transformations were achieved using transformation matrices. Here is the relevant code (only the code related to the sea, clouds, and city is shown here, as the bus and car involve more complex code related to subsequent control and movement, which will be discussed later):
 随后，我们通过初始位置地物的状态，对地物进行缩放、平移和旋转，将地物放到合适的位置，我们将云朵摆放到距离地面相当远的垂直位置，将海面摆放到城市地面以下，并将大巴放置到城市中央的初始位置（不能允许大巴刚开始就出现在道路之外，这样一开始就会触发障碍物碰撞机制导致大巴爆炸），这里综合利用了变换矩阵，参见以下的代码：（这里只展示海面、云朵和城市相关的代码，因为大巴和小车本身还和后续的控制、运动有关，会有更复杂的代码，在后续会讲到）：
