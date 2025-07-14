@@ -70,7 +70,15 @@ When starting up, there will be a period of white screen because the scene is la
 Initially, we searched for relevant models on SketchUp. At the beginning, we intended to use some advanced models, which were more complex in format. However, we encountered significant difficulties during the model import process. We found that it required modifying some underlying configurations. After attempting for a week, we gave up on this approach. Later, we directly searched for standard models in the .obj format. We found models related to a Japanese city online, including the city model, bus model, car model, cloud model, and sea model. We successfully exported their .obj files as actual models for use in our project. Here is the relevant code:
 首先，我们在sketchup上寻找相关模型，刚开始，我们是准备使用一些高级的模型，即一些格式较复杂的模型，但是后来在引入模型的过程中遇到了较大的困难，发现其中需要更改比较底层的配置，我们在尝试了一周后放弃了这条路径，后来，我们直接按照.obj去寻找标准模型，在网上找到了某个日本城市相关的模型，包括城市模型、大巴模型、小车模型、云朵模型、大海模型。于是，我们分别导出了其.obj文件作为实际模型并取得了成功。以下是相关代码：
 
-<pre lang="markdown"> ```cpp Model car(FileSystem::getPath("objects/car/car.obj")); Model bus(FileSystem::getPath("objects/bus/bus.obj")); Model city(FileSystem::getPath("objects/city/city.obj")); Model cloud(FileSystem::getPath("objects/cloud/cloud.obj")); Model sea(FileSystem::getPath("objects/sea/sea.obj")); Model wheel(FileSystem::getPath("objects/wheel/wheel.obj")); ``` </pre>
+<pre lang="markdown"> 
+  ```
+  cpp Model car(FileSystem::getPath("objects/car/car.obj")); 
+  Model bus(FileSystem::getPath("objects/bus/bus.obj")); 
+  Model city(FileSystem::getPath("objects/city/city.obj")); 
+  Model cloud(FileSystem::getPath("objects/cloud/cloud.obj")); 
+  Model sea(FileSystem::getPath("objects/sea/sea.obj")); 
+  Model wheel(FileSystem::getPath("objects/wheel/wheel.obj")); 
+  ``` </pre>
 
 We referenced and adapted some content from the model loading section of LearnOpenGL, and made modifications according to our specific needs. The details of loading models are all in the `model.h` and `mesh.h` files.
 
